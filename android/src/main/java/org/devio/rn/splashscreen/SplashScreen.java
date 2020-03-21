@@ -1,8 +1,15 @@
 package org.devio.rn.splashscreen;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.graphics.Rect;
 import android.os.Build;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import java.lang.ref.WeakReference;
 
@@ -35,6 +42,52 @@ public class SplashScreen {
                     if (!mSplashDialog.isShowing()) {
                         mSplashDialog.show();
                     }
+
+                }
+            }
+        });
+    }
+
+    public static void showSecond(final Activity activity, final int themeResId) {
+        if (activity == null) return;
+
+
+        mActivity = new WeakReference<Activity>(activity);
+
+
+
+        try {
+            activity.getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+            activity.getActionBar().hide();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!activity.isFinishing()) {
+                    try {
+                        mSplashDialog = new Dialog(activity, themeResId);
+                        mSplashDialog.setContentView(R.layout.launch_screen);
+                        mSplashDialog.setCancelable(false);
+
+                        final ViewGroup viewGroup = mSplashDialog.findViewById (android.R.id.content);//ViewGroup) ((ViewGroup)activity.findViewById(android.R.id.content)).getChildAt(0);
+
+                        ViewGroup childInside = (ViewGroup) ((ViewGroup)viewGroup).getChildAt(0);
+
+                        ProgressBar nextChildD = (ProgressBar) childInside.getChildAt(0);
+                        ImageView imageView = (ImageView) childInside.getChildAt(1);
+
+                        nextChildD.setVisibility(View.VISIBLE);
+                        imageView.setVisibility(View.INVISIBLE);
+
+                        if (!mSplashDialog.isShowing()) {
+                            mSplashDialog.show();
+                        }
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                    }
                 }
             }
         });
@@ -44,8 +97,8 @@ public class SplashScreen {
      * 打开启动屏
      */
     public static void show(final Activity activity, final boolean fullScreen) {
-        int resourceId = fullScreen ? R.style.SplashScreen_Fullscreen : R.style.SplashScreen_SplashTheme;
-
+        //int resourceId = fullScreen ? R.style.SplashScreen_Fullscreen : R.style.SplashScreen_SplashTheme;
+        int resourceId=R.style.SplashScreen_SplashTheme;
         show(activity, resourceId);
     }
 
@@ -54,6 +107,12 @@ public class SplashScreen {
      */
     public static void show(final Activity activity) {
         show(activity, false);
+    }
+
+    public static void show(final Activity activity,boolean data,String from) {
+        //int resourceId = data ? R.style.SplashScreen_Fullscreen : R.style.SplashScreen_SplashTheme;
+        int resourceId=R.style.SplashScreen_Fullscreen;
+        showSecond(activity, resourceId);
     }
 
     /**
